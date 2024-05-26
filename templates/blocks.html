@@ -5,6 +5,7 @@
 </head>
 <body>
     <h1>Exames de Sangue</h1>
+    <p>A blockchain é válida: {{ is_valid }}</p>
     <ul>
     {% for block in blocks %}
         <li>
@@ -13,8 +14,26 @@
             <p>Hash anterior: {{ block.previous_hash }}</p>
             <p>Dados: {{ block.data }}</p>
             <p>Hash: {{ block.hash }}</p>
+            <button class="delete-button" data-index="{{ block.index }}">Deletar</button>
         </li>
     {% endfor %}
     </ul>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('.delete-button').click(function() {
+            var index = $(this).data('index');
+            $.ajax({
+                url: '/blocks/' + index,
+                type: 'DELETE',
+                success: function(result) {
+                    alert(result.message);
+                    location.reload();
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>

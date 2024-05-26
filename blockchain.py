@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, redirect
 import hashlib 
 import time 
 from flask_swagger_ui import get_swaggerui_blueprint
@@ -70,14 +70,17 @@ class Blockchain:
             if not self.is_valid_new_block(self.blocks[i], self.blocks[i - 1]):
                 return False
         return True
+    
+    def delete_block(self, index):
+        if index < 1 or index >= len(self.blocks):
+            return False  # Não pode deletar o bloco gênesis ou um bloco que não existe
+        del self.blocks[index]
+        for i in range(index, len(self.blocks)):
+            self.blocks[i].index -= 1  # Atualiza os índices dos blocos subsequentes
+        return True
+    
 
 blockchain = Blockchain(4)  # Difficulty set to 4 for proof of work
-
-# Adding blood test results as individual blocks
-blockchain.add_block("hemoglobina 80")
-blockchain.add_block("colesterol HDL 100")
-blockchain.add_block("triglicerídeos 150")
-blockchain.add_block("glicose 90")
 
 SWAGGER_URL = '/api/docs'  # URL para expor a documentação Swagger UI (sem o arquivo .json)
 API_URL = '/static/swagger.json'  # Rota para o arquivo .json da API
@@ -96,24 +99,25 @@ app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 @app.route('/resultado', methods=['GET'])
 def get_blocks():
     blocks_data = [{'index': block.index, 'timestamp': block.timestamp, 'previous_hash': block.previous_hash, 'data': block.data, 'hash': block.hash} for block in blockchain.blocks]
-    return render_template('blocks.html', blocks=blocks_data, time=time)
+    is_valid = blockchain.is_blockchain_valid()
+    return render_template('blocks.html', blocks=blocks_data, is_valid=is_valid, time=time)
 
 @app.route('/blocks', methods=['GET', 'POST'])
 def blocks():
     if request.method == 'POST':
         data = request.form.get('data')
         blockchain.add_block(data)
-        return jsonify({'message': 'New block added'}), 201
+        return redirect('/resultado')
     else:
         return render_template('add_block.html')
-
-
-@app.route('/blocks/validity', methods=['GET'])
-def check_validity():
-    if blockchain.is_blockchain_valid():
-        return jsonify({'message': 'Blockchain is valid'}), 200
+    
+@app.route('/blocks/<int:index>', methods=['DELETE'])
+def delete_block(index):
+    if blockchain.delete_block(index):
+        return jsonify({'message': f'Block #{index} has been deleted'}), 200
     else:
-        return jsonify({'message': 'Blockchain is not valid'}), 400
+        return jsonify({'message': f'Cannot delete block #{index}'}), 400
+
 
 if __name__ == '__main__':
     app.run(debug=True)

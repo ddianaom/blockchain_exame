@@ -1,93 +1,68 @@
 {
-    "swagger": "2.0",
-    "info": {
-      "version": "1.0.0",
-      "title": "Blockchain API",
-      "description": "API para interagir com a Blockchain"
-    },
-    "host": "localhost:5000",
-    "basePath": "/",
-    "schemes": [
-      "http"
-    ],
-    "paths": {
-      "/blocks": {
-        "get": {
-          "summary": "Obter todos os blocos",
-          "description": "Retorna todos os blocos na blockchain",
-          "responses": {
-            "200": {
-              "description": "Uma lista de blocos",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/definitions/Block"
-                }
-              }
-            }
-          }
-        },
-        "post": {
-          "summary": "Adicionar um novo bloco",
-          "description": "Adiciona um novo bloco à blockchain",
-          "parameters": [
-            {
-              "name": "data",
-              "in": "body",
-              "required": true,
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "201": {
-              "description": "Bloco adicionado com sucesso"
-            }
+  "swagger": "2.0",
+  "info": {
+    "title": "Blockchain API",
+    "version": "1.0"
+  },
+  "paths": {
+    "/blocks": {
+      "get": {
+        "summary": "Renderiza a página para adicionar um novo bloco",
+        "responses": {
+          "200": {
+            "description": "Página renderizada com sucesso"
           }
         }
       },
-      "/blocks/validity": {
-        "get": {
-          "summary": "Verificar a validade da blockchain",
-          "description": "Verifica se a blockchain é válida",
-          "responses": {
-            "200": {
-              "description": "Blockchain é válida"
-            },
-            "400": {
-              "description": "Blockchain não é válida"
-            }
+      "post": {
+        "summary": "Adiciona um novo bloco à blockchain",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "formData",
+            "required": true,
+            "type": "string",
+            "description": "Os dados para o novo bloco"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Bloco adicionado com sucesso, redirecionando para '/resultado'"
           }
         }
       }
     },
-    "definitions": {
-      "Block": {
-        "type": "object",
-        "properties": {
-          "index": {
+    "/blocks/{index}": {
+      "delete": {
+        "summary": "Deleta um bloco da blockchain pelo índice",
+        "parameters": [
+          {
+            "name": "index",
+            "in": "path",
+            "required": true,
             "type": "integer",
-            "description": "O índice do bloco na blockchain"
+            "description": "O índice do bloco a ser deletado"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bloco deletado com sucesso"
           },
-          "timestamp": {
-            "type": "number",
-            "description": "O timestamp quando o bloco foi criado"
-          },
-          "previous_hash": {
-            "type": "string",
-            "description": "O hash do bloco anterior na blockchain"
-          },
-          "data": {
-            "type": "string",
-            "description": "Os dados contidos no bloco"
-          },
-          "hash": {
-            "type": "string",
-            "description": "O hash do bloco"
+          "400": {
+            "description": "Não foi possível deletar o bloco"
+          }
+        }
+      }
+    },
+    "/resultado": {
+      "get": {
+        "summary": "Obtém todos os blocos da blockchain",
+        "responses": {
+          "200": {
+            "description": "Blocos obtidos com sucesso"
           }
         }
       }
     }
   }
-  
+}
