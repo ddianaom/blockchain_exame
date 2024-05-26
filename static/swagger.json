@@ -1,0 +1,93 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "Blockchain API",
+      "description": "API para interagir com a Blockchain"
+    },
+    "host": "localhost:5000",
+    "basePath": "/",
+    "schemes": [
+      "http"
+    ],
+    "paths": {
+      "/blocks": {
+        "get": {
+          "summary": "Obter todos os blocos",
+          "description": "Retorna todos os blocos na blockchain",
+          "responses": {
+            "200": {
+              "description": "Uma lista de blocos",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Block"
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "summary": "Adicionar um novo bloco",
+          "description": "Adiciona um novo bloco à blockchain",
+          "parameters": [
+            {
+              "name": "data",
+              "in": "body",
+              "required": true,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "201": {
+              "description": "Bloco adicionado com sucesso"
+            }
+          }
+        }
+      },
+      "/blocks/validity": {
+        "get": {
+          "summary": "Verificar a validade da blockchain",
+          "description": "Verifica se a blockchain é válida",
+          "responses": {
+            "200": {
+              "description": "Blockchain é válida"
+            },
+            "400": {
+              "description": "Blockchain não é válida"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "Block": {
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "description": "O índice do bloco na blockchain"
+          },
+          "timestamp": {
+            "type": "number",
+            "description": "O timestamp quando o bloco foi criado"
+          },
+          "previous_hash": {
+            "type": "string",
+            "description": "O hash do bloco anterior na blockchain"
+          },
+          "data": {
+            "type": "string",
+            "description": "Os dados contidos no bloco"
+          },
+          "hash": {
+            "type": "string",
+            "description": "O hash do bloco"
+          }
+        }
+      }
+    }
+  }
+  

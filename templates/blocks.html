@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exames de Sangue</title>
+</head>
+<body>
+    <h1>Exames de Sangue</h1>
+    <ul>
+    {% for block in blocks %}
+        <li>
+            <h2>Bloco #{{ block.index }}</h2>
+            <p>Timestamp: {{time.strftime('%d/%m/%Y %H:%M:%S', time.localtime(block.timestamp))}}</p>
+            <p>Hash anterior: {{ block.previous_hash }}</p>
+            <p>Dados: {{ block.data }}</p>
+            <p>Hash: {{ block.hash }}</p>
+        </li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
