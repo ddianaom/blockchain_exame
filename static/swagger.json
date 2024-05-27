@@ -34,7 +34,7 @@
     },
     "/blocks/{index}": {
       "delete": {
-        "summary": "Deleta um bloco da blockchain pelo índice",
+        "summary": "Deleta um bloco da blockchain pelo índice para fins didáticos",
         "parameters": [
           {
             "name": "index",
