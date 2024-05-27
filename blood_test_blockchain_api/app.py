@@ -335,5 +335,10 @@ def read_all_patients():
 def read_all_exams():
     return render_template('exams.html')
 
+@app.route('/api/patient/exam/patient_id')
+def read_patient_exams():
+    return render_template('patient_exam.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True)
