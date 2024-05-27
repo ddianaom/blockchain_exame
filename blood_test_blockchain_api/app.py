@@ -4,8 +4,11 @@ import time
 from flask_swagger_ui import get_swaggerui_blueprint
 from blockchain import Blockchain
 import json
+from flask_cors import CORS
 
 app = app = Flask(__name__)
+
+CORS(app)
 
 # Configuração do Swagger UI (Documentação da API)
 SWAGGER_URL = '/api/docs'  
@@ -59,8 +62,6 @@ def create_patient():
     patient_id = request.json.get('patient_id')
     patient_name = request.json.get('patient_name')
     patient_blood_type = request.json.get('patient_blood_type')
-
-    # TODO: Adicionar verificação se usuário já existe
 
     # Cria o JSON do usuário
     patient_json = create_user_json(patient_id, patient_name, patient_blood_type)
@@ -288,17 +289,6 @@ def read_all_exams():
 
     return jsonify({"message": "There is no exams created in the blockchain"}), 400
 
-'''
-@app.route('/api/patient', methods=['GET', 'POST'])
-def blocks():
-    # Adicionar um novo paciente
-    if request.method == 'POST':
-        data = request.form.get('data')
-        blockchain.add_block(data)
-        return redirect('/blockchain')
-    else:
-        return render_template('add_block.html')
-
 @app.route('/add_block', methods=['GET', 'POST'])
 def blocks():
     # Adicionar novo bloco
@@ -308,13 +298,13 @@ def blocks():
         return redirect('/blockchain')
     else:
         return render_template('add_block.html')
-'''
+
 @app.route('/blockchain/<int:index>', methods=['DELETE'])
 def delete_block(index):
-    '''
-    Não se deve deletar um bloco de uma blockchain, esse método foi inserido para
-    validação da função is_blockchain_valid()
-    '''
+    
+    #Não se deve deletar um bloco de uma blockchain, esse método foi inserido para
+    #validação da função is_blockchain_valid()
+
     if blockchain.delete_block(index):
         return jsonify({'message': f'Bloco #{index} foi deletado'}), 200
     else:

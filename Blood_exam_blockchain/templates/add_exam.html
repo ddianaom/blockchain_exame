@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Adicionar Exame</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Adicionar novo exame</h1>
+        <form id="addExamForm">
+            <label for="result1">Hemoglobina:</label>
+            <input type="text" id="result1" name="result1"><br>
+            <label for="result2">Colesterol HDL:</label>
+            <input type="text" id="result2" name="result2"><br>
+            <label for="result3">Colesterol LDL:</label>
+            <input type="text" id="result3" name="result3"><br>
+            <label for="result4">Glicose:</label>
+            <input type="text" id="result4" name="result4"><br>
+            <input type="submit" value="Adicionar Exame" class="margin">
+        </form>
+        <div class="button-container">
+            <button class="button" onclick="window.location.href='/'">Voltar</button>
+        </div>
+    </div>
+
+    <script>
+        function generateRandomId(length) {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            const charactersLength = characters.length;
+
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+
+            return result;
+        }
+
+        document.getElementById('addExamForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const patientId = "{{ patient_id }}";
+            console.log(patientId)
+
+            const hemoglobina = document.getElementById('result1').value;
+            const colesterolHDL = document.getElementById('result2').value;
+            const colesterolLDL = document.getElementById('result3').value;
+            const glicose = document.getElementById('result4').value;
+            const data = new Date().toISOString().split('T')[0];
+            
+            fetch('http://localhost:5000/api/patient/exam/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    exam_id: generateRandomId(16),
+                    patient_id: patientId,
+                    hemoglobina: hemoglobina,
+                    colesterolHDL: colesterolHDL,
+                    colesterolLDL: colesterolLDL,
+                    glicose: glicose,
+                    data: data
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Exam added successfully!');
+            })
+            .catch(error => {
+                alert('ERROR!');
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

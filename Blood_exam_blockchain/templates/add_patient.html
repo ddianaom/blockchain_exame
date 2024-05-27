@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Adicionar Paciente</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Adicionar novo paciente</h1>
+        <form id="patientForm">
+            <label for="name">Nome completo:</label><br>
+            <input type="text" id="name" name="name"><br>
+            <label for="bloodtype">Tipo sanguíneo:</label><br>
+            <input type="text" id="bloodtype" name="bloodtype"><br>
+            <input type="submit" value="Adicionar Paciente" class="margin">
+        </form>
+        <div class="button-container">
+            <button class="button" onclick="window.location.href='/'">Voltar</button>
+        </div>
+    </div>
+
+    <script>
+        function generateRandomId(length) {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            const charactersLength = characters.length;
+
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+
+            return result;
+        }
+
+        document.getElementById('patientForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const patientName = document.getElementById('name').value;
+            const patientBloodType = document.getElementById('bloodtype').value;
+            
+            fetch('http://localhost:5000/api/patient', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    patient_id: generateRandomId(16),
+                    patient_name: patientName,
+                    patient_blood_type: patientBloodType
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Patient added successfully!');
+            })
+            .catch(error => {
+                alert('ERROR!');
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>

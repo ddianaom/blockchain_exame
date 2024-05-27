@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resultados do Exame</title>
+    <style>
+    th {
+      padding: 1px 100px;
+    }
+    </style>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const patientId = "{{ patient_id }}";
+            fetchExams(patientId);
+        });
+
+        async function fetchExams(patientId) {
+            try {
+                console.log(patientId);
+                const response = await fetch(`http://localhost:5000/api/patient/exams/${patientId}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                const data = await response.json();
+                populateTable(data.Exams);
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+            }
+        }
+
+        function populateTable(exams) {
+            const table = document.getElementById('examsTable');
+            exams.forEach(exam => {
+                const row = table.insertRow();
+                const nameCell = row.insertCell(0);
+                const resultCell = row.insertCell(1);
+
+                nameCell.textContent = exam.exam_id; // You can change this to the actual exam name if available
+                resultCell.innerHTML = `
+                    Hemoglobina: ${exam.hemoglobina}<br>
+                    Colesterol HDL: ${exam.colesterolHDL}<br>
+                    Colesterol LDL: ${exam.colesterolLDL}<br>
+                    Glicose: ${exam.glicose}<br>
+                    Data: ${exam.data}
+                `;
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Resultados do Exame do Paciente</h1>
+        <table>
+            <tr>
+                <th>Nome do Exame</th>
+                <th>Resultado</th>
+            </tr>
+            <tbody id="examsTable">
+                <!-- Rows will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+        <button class="button" onclick="window.location.href='/'">Voltar</button>
+    </div>
+</body>
+</html>
