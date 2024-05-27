@@ -46,6 +46,8 @@ def create_exam_json(exam_id, patient_id, hemoglobina, colesterolHDL, colesterol
 def home():
     return render_template("home.html")
 
+'''
+
 # Rotas da URL
 @app.route('/api/blockchain', methods=['GET'])
 def get_blocks():
@@ -288,7 +290,6 @@ def read_all_exams():
 
     return jsonify({"message": "There is no exams created in the blockchain"}), 400
 
-'''
 @app.route('/api/patient', methods=['GET', 'POST'])
 def blocks():
     # Adicionar um novo paciente
@@ -308,17 +309,31 @@ def blocks():
         return redirect('/blockchain')
     else:
         return render_template('add_block.html')
-'''
+
 @app.route('/blockchain/<int:index>', methods=['DELETE'])
 def delete_block(index):
-    '''
+    
     Não se deve deletar um bloco de uma blockchain, esse método foi inserido para
     validação da função is_blockchain_valid()
-    '''
+
     if blockchain.delete_block(index):
         return jsonify({'message': f'Bloco #{index} foi deletado'}), 200
     else:
         return jsonify({'message': f'Não é possível deletar o bloco #{index}'}), 400
+
+'''
+    
+@app.route('/api/patient')
+def create_patient():
+    return render_template('add_patient.html')
+
+@app.route('/api/patients')
+def read_all_patients():
+    return render_template('patients.html')
+
+@app.route('/api/patient/exams')
+def read_all_exams():
+    return render_template('exams.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

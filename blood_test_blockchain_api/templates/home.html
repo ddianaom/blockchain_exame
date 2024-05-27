@@ -1,12 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>RP Flask REST API</title>
+    <title>Hospital</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
 </head>
 <body>
-    <h1>
-        Hello, World!
-    </h1>
+    <div class="container">
+        <h1>Bem-vindo ao nosso Hospital!</h1>
+        <img src="{{ url_for('static', filename='images/hospital.png') }}" width="30%">
+        <div class="button-container">
+            <button class="button" onclick="window.location.href='api/patient'">Adicionar Paciente</button>
+            <button class="button" onclick="window.location.href='api/patients'">Ver Todos os Pacientes</button>
+            <button class="button" onclick="window.location.href='api/patient/exams'">Ver Todos os Exames</button>
+        </div>
+    </div>
 </body>
 </html>
