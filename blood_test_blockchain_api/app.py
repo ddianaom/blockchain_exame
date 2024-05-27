@@ -63,8 +63,6 @@ def create_patient():
     patient_name = request.json.get('patient_name')
     patient_blood_type = request.json.get('patient_blood_type')
 
-    # TODO: Adicionar verificação se usuário já existe
-
     # Cria o JSON do usuário
     patient_json = create_user_json(patient_id, patient_name, patient_blood_type)
 
