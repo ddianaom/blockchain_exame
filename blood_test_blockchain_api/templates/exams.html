@@ -1,12 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>RP Flask REST API</title>
+    <title>Resultados do Exame</title>
+    <style>
+    th {
+      padding: 1px 100px;
+    }
+    </style>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
 </head>
 <body>
-    <h1>
-        Todos os exames
-    </h1>
+    <div class="container">
+        <h1>Resultados do Exame de Diana</h1>
+        <table>
+            <tr>
+                <th>Nome do Exame</th>
+                <th>Resultado</th>
+            </tr>
+            <tr>
+                <td>Hemoglobina</td>
+                <td>80</td>
+            </tr>
+            <tr>
+                <td>Colesterol HDL</td>
+                <td>93</td>
+            </tr>
+            <tr>
+                <td>Glicose</td>
+                <td>123</td>
+            </tr>
+        </table>
+        <h1>Resultados do Exame de Larissa</h1>
+        <table>
+            <tr>
+                <th>Nome do Exame</th>
+                <th>Resultado</th>
+            </tr>
+            <tr>
+                <td>Hemoglobina</td>
+                <td>87</td>
+            </tr>
+            <tr>
+                <td>Colesterol HDL</td>
+                <td>94</td>
+            </tr>
+            <tr>
+                <td>Glicose</td>
+                <td>124</td>
+            </tr>
+        </table>
+        <button class="button" onclick="window.location.href='/'">Voltar</button>
+    </div>
 </body>
 </html>

@@ -6,22 +6,26 @@
 </head>
 <body>
     <div class="container">
+        <img src="{{ url_for('static', filename='images/person.png') }}" width="30%">
         <h1>Lista de Pacientes</h1>
         <table>
             <tr>
                 <th>Nome</th>
                 <th>Tipo Sanguíneo</th>
                 <th>Exames</th>
+                <th>Adicionar Exames</th>
             </tr>
             <tr>
                 <td>Diana adsfsdfasdfasd</td>
                 <td>A+</td>
                 <td><a href="/api/patient/exam/patient_id">Ver exames</a></td>
+                <td><a href="/api/patient/exam/patient_id/add_exam">Adicionar exames</a></td>
             </tr>
             <tr>
                 <td>Larissa</td>
                 <td>O+</td>
                 <td><a href="/api/patient/exam/patient_id">Ver exames</a></td>
+                <td><a href="/api/patient/exam/patient_id/add_exam">Adicionar exames</a></td>
             </tr>
         </table>
         <button class="button" onclick="window.location.href='/'">Voltar</button>

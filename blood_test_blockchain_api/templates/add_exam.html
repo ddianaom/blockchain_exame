@@ -1,12 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>RP Flask REST API</title>
+    <title>Adicionar Exame</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
 </head>
 <body>
-    <h1>
-        Adicionar exame
-    </h1>
+    <div class="container">
+        <h1>Adicionar novo exame</h1>
+        <form action="/api/patient/add" method="post">
+            <input type="text" id="result1" name="result1"><br>
+            <input type="text" id="result2" name="result2"><br>
+            <input type="text" id="result3" name="result3"><br>
+            <input type="submit" value="Adicionar Exame" class="margin">
+        </form>
+        <div class="button-container">
+            <button class="button" onclick="window.location.href='/'">Voltar</button>
+        </div>
+    </div>
 </body>
 </html>
