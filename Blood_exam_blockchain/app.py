@@ -3,8 +3,10 @@ import hashlib
 import time 
 from flask_swagger_ui import get_swaggerui_blueprint
 import json
+from flask_cors import CORS
 
 app = app = Flask(__name__)
+CORS(app)
 
 # Configuração do Swagger UI (Documentação da API)
 SWAGGER_URL = '/api/docs'  
@@ -55,13 +57,13 @@ def read_all_patients():
 def read_all_exams():
     return render_template('exams.html')
 
-@app.route('/api/patient/exam/patient_id')
-def read_patient_exams():
-    return render_template('patient_exam.html')
+@app.route('/api/patient/exam/<string:patient_id>')
+def read_patient_exams(patient_id):
+    return render_template('patient_exam.html', patient_id=patient_id)
 
-@app.route('/api/patient/exam/patient_id/add_exam')
-def create_exam():
-    return render_template('add_exam.html')
+@app.route('/api/patient/add_exam/<string:patient_id>')
+def create_exam(patient_id):
+    return render_template('add_exam.html', patient_id=patient_id)
 
 
 if __name__ == '__main__':

@@ -3,6 +3,41 @@
 <head>
     <title>Lista de Pacientes</title>
     <link rel="stylesheet" type="text/css" href="/static/styles.css">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            fetchPatients();
+        });
+
+        async function fetchPatients() {
+            try {
+                const response = await fetch('http://localhost:5000/api/patients');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                const data = await response.json();
+                populateTable(data.patients);
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+            }
+        }
+
+        function populateTable(patients) {
+            const table = document.getElementById('patientsTable');
+            patients.forEach(patient => {
+                const row = table.insertRow();
+                const nameCell = row.insertCell(0);
+                const bloodTypeCell = row.insertCell(1);
+                const examsCell = row.insertCell(2);
+                const addExamCell = row.insertCell(3);
+
+                nameCell.textContent = patient.patient_name;
+                bloodTypeCell.textContent = patient.patient_blood_type;
+                examsCell.innerHTML = `<a href="/api/patient/exam/${patient.patient_id}">Ver exames</a>`;
+                addExamCell.innerHTML = `<a href="/api/patient/add_exam/${patient.patient_id}">Adicionar exames</a>`;
+            });
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -15,18 +50,9 @@
                 <th>Exames</th>
                 <th>Adicionar Exames</th>
             </tr>
-            <tr>
-                <td>Diana adsfsdfasdfasd</td>
-                <td>A+</td>
-                <td><a href="/api/patient/exam/patient_id">Ver exames</a></td>
-                <td><a href="/api/patient/exam/patient_id/add_exam">Adicionar exames</a></td>
-            </tr>
-            <tr>
-                <td>Larissa</td>
-                <td>O+</td>
-                <td><a href="/api/patient/exam/patient_id">Ver exames</a></td>
-                <td><a href="/api/patient/exam/patient_id/add_exam">Adicionar exames</a></td>
-            </tr>
+            <tbody id="patientsTable">
+                <!-- Rows will be inserted here by JavaScript -->
+            </tbody>
         </table>
         <button class="button" onclick="window.location.href='/'">Voltar</button>
     </div>
