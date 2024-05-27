@@ -23,12 +23,23 @@ app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 blockchain = Blockchain(2)  # Inserir dificuldade
 
-# Função para converter valores de string para JSON
+# Funções para converter valores de string para JSON
 def create_user_json(patient_id, patient_name, patient_blood_type):
     return {
         "patient_id": patient_id,
         "patient_name": patient_name,
         "patient_blood_type": patient_blood_type
+    }
+
+def create_exam_json(exam_id, patient_id, hemoglobina, colesterolHDL, colesterolLDL, glicose, data):
+    return {
+        "exam_id": exam_id,
+        "patient_id": patient_id,
+        "hemoglobina": hemoglobina,
+        "colesterolHDL": colesterolHDL,
+        "colesterolLDL": colesterolLDL,
+        "glicose": glicose,
+        "data": data
     }
 
 @app.route("/")
@@ -134,25 +145,148 @@ def read_all_patients():
 
     return jsonify({"message": "There is no patients in the blockchain"}), 400
 
-@app.route('/api/patient/exam/<int:index>', methods=['POST'])
+@app.route('/api/patient/exam/', methods=['POST'])
 def create_exam():
-    return {}
+    exam_id = request.json.get('exam_id')
+    patient_id = request.json.get('patient_id')
+    hemoglobina = request.json.get('hemoglobina')
+    colesterolHDL = request.json.get('colesterolHDL')
+    colesterolLDL = request.json.get('colesterolLDL')
+    glicose = request.json.get('glicose')
+    data = request.json.get('data')
 
-@app.route('/api/patient/exam/<int:index>', methods=['PUT'])
-def update_exam():
-    return {}
+    # Cria o JSON do exame
+    exam_json = create_exam_json(exam_id, patient_id, hemoglobina, colesterolHDL, colesterolLDL, glicose, data)
 
-@app.route('/api/patient/exam/<int:index>', methods=['GET'])
-def read_patient_last_exam():
-    return {}
+    # Verificação se o paciente solicitado existe
+    has_patient = False
+    blocks_data = [{'index': block.index, 'timestamp': block.timestamp, 'previous_hash': block.previous_hash, 'data': block.data, 'hash': block.hash} for block in blockchain.blocks]
 
-@app.route('/api/patient/exam/<int:index>', methods=['GET'])
-def read_patient_exams():
-    return {}
+    for block in blocks_data:
+        if block['data'] == 'Genesis Block':
+            continue
 
-@app.route('/api/patient/exam/<int:index>', methods=['GET'])
+        block_data = json.loads(block['data'])
+
+        if 'patient_name' in block_data:
+            if block_data['patient_id'] == patient_id:
+                has_patient = True
+
+    if has_patient:
+        # Salvar o valor criado na blockchain
+        data_to_save = json.dumps(exam_json)
+        blockchain.add_block(data_to_save)
+
+        return jsonify({"message": "Exam created successfully", "Exam": exam_json}), 201
+    else:
+        return jsonify({"message": "Patient not found in the blockchain"}), 400
+
+@app.route('/api/patient/exam/<string:index>', methods=['PUT'])
+def update_exam(index):
+    exam_id = index
+    
+    patient_id = request.json.get('patient_id')
+    hemoglobina = request.json.get('hemoglobina')
+    colesterolHDL = request.json.get('colesterolHDL')
+    colesterolLDL = request.json.get('colesterolLDL')
+    glicose = request.json.get('glicose')
+    data = request.json.get('data')
+
+    blocks_data = [{'index': block.index, 'timestamp': block.timestamp, 'previous_hash': block.previous_hash, 'data': block.data, 'hash': block.hash} for block in blockchain.blocks]
+
+    for block in blocks_data:
+        if block['data'] == 'Genesis Block':
+            continue
+
+        block_data = json.loads(block['data'])
+
+        if 'exam_id' in block_data:
+            if block_data['exam_id'] == exam_id:
+                # Cria o JSON do usuário
+                exam_json = create_exam_json(exam_id, patient_id, hemoglobina, colesterolHDL, colesterolLDL, glicose, data)
+
+                # Salvar o valor criado na blockchain
+                data = json.dumps(exam_json)
+                blockchain.add_block(data)
+                
+                return jsonify({"message": "Exam updated successfully", "Exam": data}), 200
+            
+    return jsonify({"message": "Exam not found"}), 400
+
+@app.route('/api/patient/exam/<string:index>', methods=['GET'])
+def read_patient_last_exam(index):
+    patient_id = index
+
+    blocks_data = [{'index': block.index, 'timestamp': block.timestamp, 'previous_hash': block.previous_hash, 'data': block.data, 'hash': block.hash} for block in blockchain.blocks]
+    last_exam = ""
+
+    for block in blocks_data:
+        if block['data'] == 'Genesis Block':
+            continue
+
+        block_data = json.loads(block['data'])
+
+        if 'exam_id' in block_data:
+            if block_data['patient_id'] == patient_id:
+                last_exam = block_data
+
+    if last_exam != "":
+        return jsonify({"LastExam": last_exam}), 200
+
+    return jsonify({"message": "There is no exams created for this patient"}), 400
+
+@app.route('/api/patient/exams/<string:index>', methods=['GET'])
+def read_patient_exams(index):
+    patient_id = index
+
+    blocks_data = [{'index': block.index, 'timestamp': block.timestamp, 'previous_hash': block.previous_hash, 'data': block.data, 'hash': block.hash} for block in blockchain.blocks]
+    exams = []
+
+    for block in blocks_data:
+        if block['data'] == 'Genesis Block':
+            continue
+
+        block_data = json.loads(block['data'])
+
+        if 'exam_id' in block_data:
+            if block_data['patient_id'] == patient_id:
+                # Verificar se o exame já foi incluído anteriormente na lista, ou seja, se já
+                # foi salva uma versão desatualizada do exame
+                for exam in exams:
+                    if block_data['exam_id'] == exam['exam_id']:
+                        exams.remove(exam)
+                        break
+                exams.append(block_data)
+
+    if len(exams) > 0:
+        return jsonify({"Exams": exams}), 200
+
+    return jsonify({"message": "There is no exams created for this patient"}), 400
+
+@app.route('/api/patient/exams', methods=['GET'])
 def read_all_exams():
-    return {}
+    blocks_data = [{'index': block.index, 'timestamp': block.timestamp, 'previous_hash': block.previous_hash, 'data': block.data, 'hash': block.hash} for block in blockchain.blocks]
+    exams = []
+
+    for block in blocks_data:
+        if block['data'] == 'Genesis Block':
+            continue
+
+        block_data = json.loads(block['data'])
+
+        if 'exam_id' in block_data:
+            # Verificar se o exame já foi incluído anteriormente na lista, ou seja, se já
+            # foi salva uma versão desatualizada do exame
+            for exam in exams:
+                if block_data['exam_id'] == exam['exam_id']:
+                    exams.remove(exam)
+                    break
+            exams.append(block_data)
+
+    if len(exams) > 0:
+        return jsonify({"Exams": exams}), 200
+
+    return jsonify({"message": "There is no exams created in the blockchain"}), 400
 
 '''
 @app.route('/api/patient', methods=['GET', 'POST'])
