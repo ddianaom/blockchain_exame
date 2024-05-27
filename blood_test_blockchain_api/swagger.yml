@@ -1,0 +1,92 @@
+openapi: 3.0.0
+info:
+  title: "Blood Test Flask REST API"
+  description: "An API about blood and blockchain"
+  version: "1.0.0"
+
+servers:
+  - url: "/api"
+
+components:
+  schemas:
+    Patient:
+      type: "object"
+      required:
+        - lname
+      properties:
+        fname:
+          type: "string"
+        lname:
+          type: "string"
+  parameters:
+    lname:
+      name: "lname"
+      description: "Last name of the patient to get"
+      in: path
+      required: True
+      schema:
+        type: "string"
+
+paths:
+  /patient:
+    get:
+      operationId: "patient.read_all"
+      tags:
+        - "Patient"
+      summary: "Read the list of patients"
+      responses:
+        "200":
+          description: "Successfully read patient list"
+    post:
+      operationId: "patient.create"
+      tags:
+        - Patient
+      summary: "Create a patient"
+      requestBody:
+          description: "Patient to create"
+          required: True
+          content:
+            application/json:
+              schema:
+                x-body-name: "patient"
+                $ref: "#/components/schemas/Patient"
+      responses:
+        "201":
+          description: "Successfully created Patient"
+  /patient/{lname}:
+    get:
+      operationId: "patient.read_one"
+      tags:
+        - Patient
+      summary: "Read one patient"
+      parameters:
+        - $ref: "#/components/parameters/lname"
+      responses:
+        "200":
+          description: "Successfully read patient"
+    put:
+      tags:
+        - Patient
+      operationId: "patient.update"
+      summary: "Update a patient"
+      parameters:
+        - $ref: "#/components/parameters/lname"
+      responses:
+        "200":
+          description: "Successfully updated patient"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "patient"
+              $ref: "#/components/schemas/Patient"
+    delete:
+      tags:
+        - Patient
+      operationId: "patient.delete"
+      summary: "Delete a patient"
+      parameters:
+        - $ref: "#/components/parameters/lname"
+      responses:
+        "204":
+          description: "Successfully deleted patient"
