@@ -4,8 +4,11 @@ import time
 from flask_swagger_ui import get_swaggerui_blueprint
 from blockchain import Blockchain
 import json
+from flask_cors import CORS
 
 app = app = Flask(__name__)
+
+CORS(app)
 
 # Configuração do Swagger UI (Documentação da API)
 SWAGGER_URL = '/api/docs'  
@@ -45,8 +48,6 @@ def create_exam_json(exam_id, patient_id, hemoglobina, colesterolHDL, colesterol
 @app.route("/")
 def home():
     return render_template("home.html")
-
-'''
 
 # Rotas da URL
 @app.route('/api/blockchain', methods=['GET'])
@@ -290,16 +291,6 @@ def read_all_exams():
 
     return jsonify({"message": "There is no exams created in the blockchain"}), 400
 
-@app.route('/api/patient', methods=['GET', 'POST'])
-def blocks():
-    # Adicionar um novo paciente
-    if request.method == 'POST':
-        data = request.form.get('data')
-        blockchain.add_block(data)
-        return redirect('/blockchain')
-    else:
-        return render_template('add_block.html')
-
 @app.route('/add_block', methods=['GET', 'POST'])
 def blocks():
     # Adicionar novo bloco
@@ -313,36 +304,13 @@ def blocks():
 @app.route('/blockchain/<int:index>', methods=['DELETE'])
 def delete_block(index):
     
-    Não se deve deletar um bloco de uma blockchain, esse método foi inserido para
-    validação da função is_blockchain_valid()
+    #Não se deve deletar um bloco de uma blockchain, esse método foi inserido para
+    #validação da função is_blockchain_valid()
 
     if blockchain.delete_block(index):
         return jsonify({'message': f'Bloco #{index} foi deletado'}), 200
     else:
         return jsonify({'message': f'Não é possível deletar o bloco #{index}'}), 400
-
-'''
-    
-@app.route('/api/patient')
-def create_patient():
-    return render_template('add_patient.html')
-
-@app.route('/api/patients')
-def read_all_patients():
-    return render_template('patients.html')
-
-@app.route('/api/patient/exams')
-def read_all_exams():
-    return render_template('exams.html')
-
-@app.route('/api/patient/exam/patient_id')
-def read_patient_exams():
-    return render_template('patient_exam.html')
-
-@app.route('/api/patient/exam/patient_id/add_exam')
-def create_exam():
-    return render_template('add_exam.html')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
